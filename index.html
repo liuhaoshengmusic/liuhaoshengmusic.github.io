@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	 <link rel="shortcut icon" href="LHS网页图标.png">
+    <link rel="shortcut icon" href="LHS网页图标.png">
     <title>柳皓升® | 个人作品</title>
     
     <!-- 引入国内极速 CDN -->
@@ -31,7 +31,11 @@
             --cursor-color: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
         
         body {
             background-color: var(--bg-color);
@@ -39,6 +43,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
             overflow-x: hidden;
             transition: background 0.5s ease, color 0.5s ease;
+            cursor: none !important;
         }
 
         ::-webkit-scrollbar { width: 0; }
@@ -49,7 +54,7 @@
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #ffffff;
             z-index: 999999;
-            pointer-events: none; /* 防止遮挡交互 */
+            pointer-events: none;
             transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -73,20 +78,67 @@
             transform: translate(-50%, -50%);
             mix-blend-mode: difference;
         }
-        .hover-active #cursor-circle { transform: translate(-50%, -50%) scale(1.5); background: rgba(255,255,255,0.2); }
+        .hover-active #cursor-circle { 
+            transform: translate(-50%, -50%) scale(1.5); 
+            background: rgba(255,255,255,0.2); 
+        }
 
         /* ================= 4. 内容区域 ================= */
-        #webgl-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        .content-layer { position: relative; z-index: 10; opacity: 0; transition: opacity 1s ease 0.5s; /* 延迟显示内容 */ }
+        #webgl-canvas { 
+            position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            z-index: 0; 
+            pointer-events: none; 
+        }
+        .content-layer { 
+            position: relative; z-index: 10; 
+            opacity: 0; 
+            transition: opacity 1s ease 0.5s; 
+        }
 
-        nav { position: fixed; top: 0; width: 100%; padding: 30px 5%; display: flex; justify-content: space-between; align-items: flex-start; z-index: 100; }
-        .brand { font-size: 1.4rem; font-weight: 900; letter-spacing: -1px; line-height: 1; }
-        #poem-container { margin-top: 8px; font-size: 0.85rem; color: var(--text-secondary); font-family: "FangSong", "Songti SC", serif; letter-spacing: 1px; min-height: 1.2em; opacity: 0; transition: opacity 0.5s ease; }
-        .theme-toggle { width: 30px; height: 30px; border: 1px solid currentColor; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-top: -5px; }
+        nav { 
+            position: fixed; top: 0; width: 100%; 
+            padding: 30px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            z-index: 100; 
+        }
+        .brand { 
+            font-size: 1.4rem; 
+            font-weight: 900; 
+            letter-spacing: -1px; 
+            line-height: 1; 
+        }
+        #poem-container { 
+            margin-top: 8px; 
+            font-size: 0.85rem; 
+            color: var(--text-secondary); 
+            font-family: "FangSong", "Songti SC", serif; 
+            letter-spacing: 1px; 
+            min-height: 1.2em; 
+            opacity: 0; 
+            transition: opacity 0.5s ease; 
+        }
+        .theme-toggle { 
+            width: 30px; height: 30px; 
+            border: 1px solid currentColor; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: none; 
+            margin-top: -5px; 
+        }
         .theme-toggle svg { width: 14px; height: 14px; fill: currentColor; }
 
         #hero { height: 85vh; display: flex; align-items: center; justify-content: center; }
-        .hero-text { font-size: 9vw; font-weight: 900; mix-blend-mode: exclusion; white-space: nowrap; }
+        .hero-text { 
+            font-size: 9vw; 
+            font-weight: 900; 
+            mix-blend-mode: exclusion; 
+            white-space: nowrap; 
+        }
 
         #bio { padding: 80px 10%; max-width: 1200px; margin: 0 auto; }
         .bio-title { font-size: 3rem; margin-bottom: 40px; color: var(--accent-color); }
@@ -94,14 +146,24 @@
         .bio-word { display: inline-block; transition: all 0.3s; }
         .bio-word:hover { color: var(--accent-color); transform: translateY(-3px) scale(1.1); }
 
-        .bio-gallery { margin-top: 60px; width: 100%; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+        .bio-gallery { 
+            margin-top: 60px; width: 100%; overflow: hidden; 
+            mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); 
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); 
+        }
         .gallery-track { display: flex; gap: 20px; width: max-content; animation: scroll 30s linear infinite; }
         .gallery-item img { width: 200px; height: 120px; object-fit: cover; filter: grayscale(1); transition: 0.3s; }
         .gallery-item:hover img { filter: grayscale(0); }
         @keyframes scroll { to { transform: translateX(-50%); } }
 
         /* ================= 5. 3D 专辑 ================= */
-        #albums { padding: 100px 0; background: rgba(0,0,0,0.02); border-top: 1px solid var(--border-color); position: relative; overflow: visible; }
+        #albums { 
+            padding: 100px 0; 
+            background: rgba(0,0,0,0.02); 
+            border-top: 1px solid var(--border-color); 
+            position: relative; 
+            overflow: visible; 
+        }
         .section-header { text-align: center; margin-bottom: 60px; }
         
         .coverflow-container {
@@ -112,8 +174,9 @@
 
         .cf-card {
             position: absolute; width: 320px; aspect-ratio: 1/1;
-            transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-            cursor: pointer;
+            transform-style: preserve-3d; 
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            cursor: none;
         }
 
         .cf-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; }
@@ -124,8 +187,23 @@
         }
         .cf-img { width: 100%; height: 100%; object-fit: cover; }
 
-        .cf-side { background: #e6e6e6; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; overflow: hidden; box-sizing: border-box; }
-        .spine-text { white-space: nowrap; font-size: 12px; letter-spacing: 2px; color: #000; font-weight: 900; opacity: 0.8; }
+        .cf-side { 
+            background: #e6e6e6; 
+            border: 1px solid #ccc; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+            box-sizing: border-box; 
+        }
+        .spine-text { 
+            white-space: nowrap; 
+            font-size: 12px; 
+            letter-spacing: 2px; 
+            color: #000; 
+            font-weight: 900; 
+            opacity: 0.8; 
+        }
 
         .cf-side-right { width: var(--box-thickness); height: 100%; top: 0; right: 0; transform: rotateY(90deg) translateZ(calc(var(--box-thickness)/2)); }
         .cf-side-right .spine-text { transform: rotate(90deg); }
@@ -135,10 +213,61 @@
 
         .cf-side-top { width: 100%; height: var(--box-thickness); top: 0; left: 0; transform: rotateX(90deg) translateZ(calc(var(--box-thickness)/2)); background: #fff; border: 1px solid #ccc; }
 
-        .cf-reflection { position: absolute; top: 100%; left: 0; width: 100%; height: 100%; transform: rotateX(180deg); opacity: 0.3; mask-image: linear-gradient(transparent 70%, #000); -webkit-mask-image: linear-gradient(transparent 70%, #000); pointer-events: none; }
+        .cf-reflection { 
+            position: absolute; top: 100%; left: 0; 
+            width: 100%; height: 100%; 
+            transform: rotateX(180deg); 
+            opacity: 0.3; 
+            mask-image: linear-gradient(transparent 70%, #000); 
+            -webkit-mask-image: linear-gradient(transparent 70%, #000); 
+            pointer-events: none; 
+        }
         .cf-reflection img { width: 100%; height: 100%; object-fit: cover; filter: blur(4px); }
-        .cf-name { position: absolute; bottom: -80px; width: 100%; text-align: center; font-size: 1rem; letter-spacing: 2px; opacity: 0; transition: 0.5s; transform: translateZ(50px); pointer-events: none; color: var(--text-primary); }
+        .cf-name { 
+            position: absolute; bottom: -80px; 
+            width: 100%; text-align: center; 
+            font-size: 1rem; letter-spacing: 2px; 
+            opacity: 0; transition: 0.5s; 
+            transform: translateZ(50px); 
+            pointer-events: none; 
+            color: var(--text-primary); 
+        }
         .cf-card.active .cf-name { opacity: 1; }
+
+        /* ================= 6. Apple Music 在线试听（新增板块） ================= */
+        #apple-music {
+            padding: 80px 5%;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            transition: background 0.5s ease;
+        }
+        .apple-music-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .apple-music-iframe {
+            width: 100%;
+            max-width: 660px;
+            height: 450px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: none;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .apple-music-iframe:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        /* 暗黑模式适配播放器阴影 */
+        body.dark-mode .apple-music-iframe {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        body.dark-mode .apple-music-iframe:hover {
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
 
         /* Footer */
         footer { padding: 100px 5% 50px; border-top: 1px solid var(--border-color); background: var(--bg-color); }
@@ -147,14 +276,40 @@
         .contact-row { margin-bottom: 15px; color: var(--text-secondary); display: flex; align-items: baseline; }
         .contact-label { color: var(--accent-color); width: 60px; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
         .social-row { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
-        .social-icon { width: 40px; height: 40px; border: 1px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: var(--text-primary); }
+        .social-icon { 
+            width: 40px; height: 40px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: 0.3s; 
+            color: var(--text-primary); 
+            cursor: none;
+        }
         .social-icon:hover { background: var(--accent-color); border-color: var(--accent-color); color: #fff; transform: translateY(-3px); }
         .social-icon svg { width: 16px; height: 16px; fill: currentColor; }
         .hours-box { padding: 20px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.02); color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8; }
         .copyright { text-align: center; color: var(--text-secondary); font-size: 0.8rem; margin-top: 60px; }
 
-        #qr-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 20000; display: none; justify-content: center; align-items: center; opacity: 0; }
-        .qr-card { background: #fff; padding: 30px; border-radius: 4px; text-align: center; transform: scale(0.8); }
+        #qr-modal { 
+            position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6); 
+            backdrop-filter: blur(5px); 
+            z-index: 20000; 
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+            opacity: 0; 
+        }
+        .qr-card { 
+            background: #fff; 
+            padding: 30px; 
+            border-radius: 4px; 
+            text-align: center; 
+            transform: scale(0.8); 
+        }
         .qr-card img { width: 250px; height: 250px; display: block; margin-bottom: 15px; }
 
         @media (max-width: 768px) {
@@ -162,6 +317,10 @@
             .coverflow-container { height: 400px; }
             .cf-card { width: 240px; }
             .hero-text { font-size: 15vw; }
+            .apple-music-iframe {
+                height: 400px;
+                border-radius: 10px;
+            }
         }
     </style>
 </head>
@@ -179,7 +338,8 @@
     </div>
 
     <!-- 智能反色光圈 -->
-    <div id="cursor-circle"></div><div id="cursor-dot"></div>
+    <div id="cursor-circle"></div>
+    <div id="cursor-dot"></div>
     <div id="webgl-canvas"></div>
 
     <div class="content-layer" id="content-layer">
@@ -188,10 +348,16 @@
                 <div class="brand">柳 皓 升<sup>®</sup></div>
                 <div id="poem-container">正在获取诗词...</div>
             </div>
-            <div class="theme-toggle" id="theme-btn" data-hover="true"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+            <div class="theme-toggle" id="theme-btn">
+                <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </div>
         </nav>
 
-        <section id="hero"><div class="hero-text-container"><div class="hero-text" id="hero-rotator">个人作品</div></div></section>
+        <section id="hero">
+            <div class="hero-text-container">
+                <div class="hero-text" id="hero-rotator">个人作品</div>
+            </div>
+        </section>
 
         <section id="bio">
             <h2 class="bio-title">个人简介</h2>
@@ -200,16 +366,46 @@
             </p>
             <div class="bio-gallery">
                 <div class="gallery-track">
-                    <div class="gallery-item"><img src="https://ts1.tc.mm.bing.net/th/id/OIP-C.8bI2spsOY9t4fHhREZvxpQHaHa?w=310&h=198&c=7&rs=1&bgcl=fffffe&r=0&o=6&dpr=1.3&pid=23.1"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.h9gwD5RqJGN3SS0znQzjUQHaHa?w=167&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.a7pnld6zwtI-TpruVGb-zwHaEK?w=315&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.xblH8WF9I88OWyIuM-dGqwHaEK?w=308&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://tse2-mm.cn.bing.net/th/id/OIP-C.yomOigUkGX8AnkDWIFLGUgHaEg?w=285&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://www.66office.com/storage/images/202012/goods_img/0_P_1607884860173.png"></div><div class="gallery-item"><img src="https://p3-sdbk2-media.byteimg.com/tos-cn-i-xv4ileqgde/fa687855dc4340a984402dff9d744ed2~tplv-xv4ileqgde-resize-w:360.image"></div>
-                    <div class="gallery-item"><img src="https://ts1.tc.mm.bing.net/th/id/OIP-C.8bI2spsOY9t4fHhREZvxpQHaHa?w=310&h=198&c=7&rs=1&bgcl=fffffe&r=0&o=6&dpr=1.3&pid=23.1"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.h9gwD5RqJGN3SS0znQzjUQHaHa?w=167&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.a7pnld6zwtI-TpruVGb-zwHaEK?w=315&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.xblH8WF9I88OWyIuM-dGqwHaEK?w=308&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://www.66office.com/storage/images/202012/goods_img/0_P_1607884860173.png"></div><div class="gallery-item"><img src="https://tse2-mm.cn.bing.net/th/id/OIP-C.yomOigUkGX8AnkDWIFLGUgHaEg?w=285&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://p3-sdbk2-media.byteimg.com/tos-cn-i-xv4ileqgde/fa687855dc4340a984402dff9d744ed2~tplv-xv4ileqgde-resize-w:360.image"></div>
+                    <div class="gallery-item"><img src="https://ts1.tc.mm.bing.net/th/id/OIP-C.8bI2spsOY9t4fHhREZvxpQHaHa?w=310&h=198&c=7&rs=1&bgcl=fffffe&r=0&o=6&dpr=1.3&pid=23.1"></div>
+                    <div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.h9gwD5RqJGN3SS0znQzjUQHaHa?w=167&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div>
+                    <div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.a7pnld6zwtI-TpruVGb-zwHaEK?w=315&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div>
+                    <div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.xblH8WF9I88OWyIuM-dGqwHaEK?w=308&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div>
+                    <div class="gallery-item"><img src="https://tse2-mm.cn.bing.net/th/id/OIP-C.yomOigUkGX8AnkDWIFLGUgHaEg?w=285&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div>
+                    <div class="gallery-item"><img src="https://www.66office.com/storage/images/202012/goods_img/0_P_1607884860173.png"></div>
+                    <div class="gallery-item"><img src="https://p3-sdbk2-media.byteimg.com/tos-cn-i-xv4ileqgde/fa687855dc4340a984402dff9d744ed2~tplv-xv4ileqgde-resize-w:360.image"></div>
+                    
+                    <div class="gallery-item"><img src="https://ts1.tc.mm.bing.net/th/id/OIP-C.8bI2spsOY9t4fHhREZvxpQHaHa?w=310&h=198&c=7&rs=1&bgcl=fffffe&r=0&o=6&dpr=1.3&pid=23.1"></div>
+                    <div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.h9gwD5RqJGN3SS0znQzjUQHaHa?w=167&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div>
+                    <div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.a7pnld6zwtI-TpruVGb-zwHaEK?w=315&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div>
+                    <div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.xblH8WF9I88OWyIuM-dGqwHaEK?w=308&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div>
+                    <div class="gallery-item"><img src="https://www.66office.com/storage/images/202012/goods_img/0_P_1607884860173.png"></div>
+                    <div class="gallery-item"><img src="https://tse2-mm.cn.bing.net/th/id/OIP-C.yomOigUkGX8AnkDWIFLGUgHaEg?w=285&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div>
+                    <div class="gallery-item"><img src="https://p3-sdbk2-media.byteimg.com/tos-cn-i-xv4ileqgde/fa687855dc4340a984402dff9d744ed2~tplv-xv4ileqgde-resize-w:360.image"></div>
                 </div>
             </div>
         </section>
 
         <section id="albums">
-            <div class="section-header"><h2>音乐作品</h2><p style="color:var(--text-secondary); margin-top:10px; font-size:0.8rem; letter-spacing:2px;">在当前专辑上滑动切换</p></div>
-            <div class="coverflow-container" id="coverflow">
-                <!-- JS生成 -->
+            <div class="section-header">
+                <h2>音乐作品</h2>
+                <p style="color:var(--text-secondary); margin-top:10px; font-size:0.8rem; letter-spacing:2px;">在当前专辑上滑动切换</p>
+            </div>
+            <div class="coverflow-container" id="coverflow"></div>
+        </section>
+
+        <!-- ====================== Apple Music 播放器（新增） ====================== -->
+        <section id="apple-music">
+            <div class="section-header">
+                <h2>在线试听</h2>
+                <p style="color:var(--text-secondary); margin-top:10px; font-size:0.8rem; letter-spacing:2px;">Apple Music 官方专辑</p>
+            </div>
+            <div class="apple-music-wrapper">
+                <iframe 
+                    class="apple-music-iframe"
+                    allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write *" 
+                    sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" 
+                    src="https://embed.music.apple.com/cn/album/%E7%9A%93%E5%8D%87-%E5%B2%81%E6%9C%88/1887498147"
+                ></iframe>
             </div>
         </section>
 
@@ -221,14 +417,30 @@
                     <div class="contact-row"><span class="contact-label">邮箱</span>1278485618@qq.com</div>
                     <div class="contact-row"><span class="contact-label">地址</span>中国 江西</div>
                     <div class="social-row">
-                        <div class="social-icon" data-hover="true" onclick="showQR('微信.png','微信')"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm5 5v8h8V8H8z"/></svg></div>
-                        <div class="social-icon" data-hover="true" onclick="showQR('QQ1278485618.jpg','QQ')"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm5 5v8h8V8H8z"/></svg></div>
-                        <a href="https://m.douyin.com/share/user/MS4wLjABAAAAjAcT63-X7V1YEyG8Sx5pKjYYCfcW9ZAx_JNrZWPVir8" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M16.5 2h-3v10.5c0 1.9-1.6 3.5-3.5 3.5-1.9 0-3.5-1.6-3.5-3.5 0-1.9 1.6-3.5 3.5-3.5.5 0 1 .1 1.5.2V5.5c-.5-.1-1-.2-1.5-.2-4.1 0-7.5 3.4-7.5 7.5S5.9 20.3 10 20.3c4.1 0 7.5-3.4 7.5-7.5V6c1.4.9 3 1.5 4.8 1.6V4c-2 0-3.8-.8-5-2z"/></svg></a>
-                        <a href="https://www.youtube.com/@liuhaosheng-music" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M21.6 7.2c-.3-1.1-1.1-1.9-2.2-2.2C17.5 4.5 12 4.5 12 4.5s-5.5 0-7.4.5c-1.1.3-1.9 1.1-2.2 2.2C2 9.1 2 12 2 12s0 2.9.5 4.8c.3 1.1 1.1 1.9 2.2 2.2 1.9.5 7.4.5 7.4.5s5.5 0 7.4-.5c1.1-.3 1.9-1.1 2.2-2.2.5-1.9.5-4.8.5-4.8s0-2.9-.5-4.8zM9.5 15v-6l5.5 3-5.5 3z"/></svg></a>
-                        <a href="https://instagram.com" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.4 5.6 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.6 18.4 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></a>
-                        <a href="https://x.com/lhaoshengmusic" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                        <a href="http://music.163.com/artist?id=53393523&userid=3929332230" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/></svg></a>
-                        <a href="https://c6.y.qq.com/base/fcgi-bin/u?__=tE6iYs7AxZBt" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></a>
+                        <div class="social-icon" onclick="showQR('微信.png','微信')">
+                            <svg viewBox="0 0 24 24"><path d="M9.3 7.7c-1.2 0-2.2 1-2.2 2.2s1 2.2 2.2 2.2 2.2-1 2.2-2.2-1-2.2-2.2-2.2zm5.4 0c-1.2 0-2.2 1-2.2 2.2s1 2.2 2.2 2.2 2.2-1 2.2-2.2-1-2.2-2.2-2.2zm-8.4 9c-.4 0-.8-.2-1.1-.5-.3-.3-.5-.7-.5-1.1 0-.4.2-.8.5-1.1.3-.3.7-.5 1.1-.5.4 0 .8.2 1.1.5.3.3.5.7.5 1.1 0 .4-.2.8-.5 1.1-.3.3-.7.5-1.1.5zm5.4 0c-.4 0-.8-.2-1.1-.5-.3-.3-.5-.7-.5-1.1 0-.4.2-.8.5-1.1.3-.3.7-.5 1.1-.5.4 0 .8.2 1.1.5.3.3.5.7.5 1.1 0 .4-.2.8-.5 1.1-.3.3-.7.5-1.1.5zm5.4 0c-.4 0-.8-.2-1.1-.5-.3-.3-.5-.7-.5-1.1 0-.4.2-.8.5-1.1.3-.3.7-.5 1.1-.5.4 0 .8.2 1.1.5.3.3.5.7.5 1.1 0 .4-.2.8-.5 1.1-.3.3-.7.5-1.1.5zm-9.8-11.2c2.3-2.3 6.1-2.3 8.4 0s2.3 6.1 0 8.4-6.1 2.3-8.4 0-2.3-6.1 0-8.4z"/></svg>
+                        </div>
+                        <div class="social-icon" onclick="showQR('QQ1278485618.jpg','QQ')">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.5 13.5c-.33 0-.6-.15-.78-.4-.2-.28-.58-.4-.92-.4-.34 0-.72.12-.92.4-.18.25-.45.4-.78.4-.66 0-1.2-.54-1.2-1.2 0-.66.54-1.2 1.2-1.2.34 0 .72.12.92.4.18.25.45.4.78.4.33 0 .6-.15.78-.4.2-.28.58-.4.92-.4.66 0 1.2.54 1.2 1.2 0 .66-.54 1.2-1.2 1.2zm-3-6c-.28 0-.5-.22-.5-.5s.22-.5.5-.5.5.22.5.5-.22.5-.5.5zm3 0c-.28 0-.5-.22-.5-.5s.22-.5.5-.5.5.22.5.5-.22.5-.5.5z"/></svg>
+                        </div>
+                        <a href="https://m.douyin.com/share/user/MS4wLjABAAAAjAcT63-X7V1YEyG8Sx5pKjYYCfcW9ZAx_JNrZWPVir8" target="_blank" class="social-icon">
+                            <svg viewBox="0 0 24 24"><path d="M16.5 2h-3v10.5c0 1.9-1.6 3.5-3.5 3.5-1.9 0-3.5-1.6-3.5-3.5 0-1.9 1.6-3.5 3.5-3.5.5 0 1 .1 1.5.2V5.5c-.5-.1-1-.2-1.5-.2-4.1 0-7.5 3.4-7.5 7.5S5.9 20.3 10 20.3c4.1 0 7.5-3.4 7.5-7.5V6c1.4.9 3 1.5 4.8 1.6V4c-2 0-3.8-.8-5-2z"/></svg>
+                        </a>
+                        <a href="https://www.youtube.com/@liuhaosheng-music" target="_blank" class="social-icon">
+                            <svg viewBox="0 0 24 24"><path d="M21.6 7.2c-.3-1.1-1.1-1.9-2.2-2.2C17.5 4.5 12 4.5 12 4.5s-5.5 0-7.4.5c-1.1.3-1.9 1.1-2.2 2.2C2 9.1 2 12 2 12s0 2.9.5 4.8c.3 1.1 1.1 1.9 2.2 2.2 1.9.5 7.4.5 7.4.5s5.5 0 7.4-.5c1.1-.3 1.9-1.1 2.2-2.2.5-1.9.5-4.8.5-4.8s0-2.9-.5-4.8zM9.5 15v-6l5.5 3-5.5 3z"/></svg>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" class="social-icon">
+                            <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.4 5.6 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.6 18.4 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+                        </a>
+                        <a href="https://x.com/lhaoshengmusic" target="_blank" class="social-icon">
+                            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                        <a href="http://music.163.com/artist?id=53393523&userid=3929332230" target="_blank" class="social-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/></svg>
+                        </a>
+                        <a href="https://c6.y.qq.com/base/fcgi-bin/u?__=tE6iYs7AxZBt" target="_blank" class="social-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                        </a>
                     </div>
                 </div>
                 <div class="footer-col">
@@ -239,37 +451,35 @@
                     </div>
                 </div>
             </div>
-            <div class="copyright">&copy; 2025 柳皓升® LIUHAOSHENG. 版权所有.</div>
+            <div class="copyright">&copy; 2025 - 2026 柳皓升® LIUHAOSHENG. 版权所有.</div>
         </footer>
     </div>
 
     <script>
-        // ================= 1. 开场逻辑 (Pure White Fade) =================
+        // ================= 1. 开场逻辑 =================
         const overlay = document.getElementById('white-overlay');
         const contentLayer = document.getElementById('content-layer');
 
         window.onload = function() {
-            // 0.5秒后开始淡出白屏
             setTimeout(() => {
                 overlay.style.opacity = '0';
                 contentLayer.style.opacity = '1';
                 
-                // 启动 JS 动画
                 setTimeout(() => {
                     overlay.style.display = 'none';
                     initAnimations();
-                }, 1500); // 等待1.5秒淡出动画完成
+                }, 1500);
             }, 500);
         };
 
         // ================= 2. 核心动画 =================
         function initAnimations() {
             fetchPoem();
-            setInterval(fetchPoem, 3000); 
+            setInterval(fetchPoem, 30000); // 30秒刷新诗词，降低请求频率
             initThreeJS();
         }
 
-        // 诗词
+        // 诗词接口
         const poemEl = document.getElementById('poem-container');
         function fetchPoem() {
             poemEl.style.opacity = 0;
@@ -281,30 +491,55 @@
                         poemEl.style.opacity = 1;
                     })
                     .catch(err => {
-                        const fallbacks = ["海内存知己，天涯若比邻", "会当凌绝顶，一览众山小", "大鹏一日同风起，扶摇直上九万里"];
+                        // 优化兜底文案
+                        const fallbacks = [
+                            "海内存知己，天涯若比邻",
+                            "会当凌绝顶，一览众山小",
+                            "大鹏一日同风起，扶摇直上九万里",
+                            "长风破浪会有时，直挂云帆济沧海"
+                        ];
                         poemEl.innerText = fallbacks[Math.floor(Math.random() * fallbacks.length)];
                         poemEl.style.opacity = 1;
                     });
             }, 300);
         }
 
-        // Hero Text
-        const words=["LIUHAOSHEG", "柳 皓 升", "独立音乐人"], heroTxt=document.getElementById('hero-rotator');
-        let wIdx=0;
+        // Hero轮播文字（修复拼写错误）
+        const words = ["LIUHAOSHENG", "柳 皓 升", "独立音乐人"], 
+              heroTxt = document.getElementById('hero-rotator');
+        let wIdx = 0;
         setInterval(()=>{
-            wIdx=(wIdx+1)%words.length;
-            gsap.to(heroTxt,{opacity:0,filter:"blur(10px)",y:-20,duration:0.8,onComplete:()=>{
-                heroTxt.innerText=words[wIdx]; gsap.set(heroTxt,{y:20});
-                gsap.to(heroTxt,{opacity:1,filter:"blur(0px)",y:0,duration:0.8});
-            }});
+            wIdx = (wIdx+1) % words.length;
+            gsap.to(heroTxt,{
+                opacity:0,
+                filter:"blur(10px)",
+                y:-20,
+                duration:0.8,
+                onComplete:()=>{
+                    heroTxt.innerText = words[wIdx]; 
+                    gsap.set(heroTxt,{y:20});
+                    gsap.to(heroTxt,{opacity:1,filter:"blur(0px)",y:0,duration:0.8});
+                }
+            });
         }, 3000);
 
-        // QR
-        const qrModal=document.getElementById('qr-modal'), qrImg=document.getElementById('qr-img-placeholder');
-        window.showQR = (url, txt)=>{ qrImg.src=url; qrModal.style.display='flex'; gsap.to(qrModal,{opacity:1,duration:0.3}); };
-        window.closeQR = ()=>{ gsap.to(qrModal,{opacity:0,duration:0.3,onComplete:()=>{qrModal.style.display='none'}}); };
+        // 二维码弹窗
+        const qrModal = document.getElementById('qr-modal'), 
+              qrImg = document.getElementById('qr-img-placeholder');
+        window.showQR = (url, txt)=>{ 
+            qrImg.src = url; 
+            qrModal.style.display = 'flex'; 
+            gsap.to(qrModal,{opacity:1,duration:0.3}); 
+        };
+        window.closeQR = ()=>{ 
+            gsap.to(qrModal,{
+                opacity:0,
+                duration:0.3,
+                onComplete:()=>{qrModal.style.display='none'}
+            }); 
+        };
 
-        // 主题
+        // 暗黑模式切换
         document.getElementById('theme-btn').addEventListener('click', ()=>{ 
             document.body.classList.toggle('dark-mode'); 
             const isDark = document.body.classList.contains('dark-mode');
@@ -316,22 +551,23 @@
             }
         });
 
-        // 光标跟随
-        const cc=document.getElementById('cursor-circle'), cd=document.getElementById('cursor-dot');
-        const hoverElements = document.querySelectorAll('[data-hover="true"]');
+        // 自定义光标跟随
+        const cc = document.getElementById('cursor-circle'), 
+              cd = document.getElementById('cursor-dot');
         document.addEventListener('mousemove', e=>{ 
-            gsap.to(cd,{x:e.clientX,y:e.clientY,duration:0.2}); 
-            gsap.to(cc,{x:e.clientX,y:e.clientY,duration:0.2}); 
+            gsap.to(cd,{x:e.clientX,y:e.clientY,duration:0.1}); 
+            gsap.to(cc,{x:e.clientX,y:e.clientY,duration:0.15}); 
         });
         document.addEventListener('mousedown', ()=>gsap.to(cc,{scale:0.8,duration:0.1}));
         document.addEventListener('mouseup', ()=>gsap.to(cc,{scale:1,duration:0.1}));
         
+        // 悬停效果
         document.querySelectorAll('a, .social-icon, .cf-card').forEach(el => {
             el.addEventListener('mouseenter', () => document.body.classList.add('hover-active'));
             el.addEventListener('mouseleave', () => document.body.classList.remove('hover-active'));
         });
 
-        // ================= 3D 专辑 (C位独立 + 间距优化) =================
+        // ================= 3D 专辑交互 =================
         const albumsData = [
             {name:"黑 (BLACK)",img:"https://p2.music.126.net/cG1TAyl1AKia40Mhhwz06w==/109951172162092710.jpg?param=177y177",link:"https://music.163.com/#/album?id=288753466"},
             {name:"潮汐未过岸",img:"https://p1.music.126.net/UF_ddUYU-TBaeNTf6dFPfw==/109951171915019526.jpg?param=130y130",link:"https://music.163.com/#/album?id=282543417"},
@@ -348,11 +584,11 @@
         const cfContainer = document.getElementById('coverflow');
         cfContainer.innerHTML = albumsData.map((a,i)=>`
             <div class="cf-card" data-index="${i}" data-link="${a.link}">
-                <div class="cf-front cf-face"><img src="${a.img}" class="cf-img"></div>
+                <div class="cf-front cf-face"><img src="${a.img}" class="cf-img" alt="${a.name}"></div>
                 <div class="cf-side cf-side-right cf-face"><div class="spine-text">${a.name}</div></div>
                 <div class="cf-side cf-side-left cf-face"><div class="spine-text">${a.name}</div></div>
                 <div class="cf-side cf-side-top cf-face"></div>
-                <div class="cf-reflection"><img src="${a.img}"></div>
+                <div class="cf-reflection"><img src="${a.img}" alt="${a.name}"></div>
                 <div class="cf-name">${a.name}</div>
             </div>
         `).join('');
@@ -367,8 +603,6 @@
                 let x = offset * spacing;
                 let rotateY = 0;
                 let zIndex = 100 - Math.abs(offset);
-                let opacity = 1;
-
                 const centerGap = 260; 
 
                 if (offset === 0) {
@@ -386,88 +620,104 @@
 
                 card.style.transform = `translateX(${x}px) translateZ(${-Math.abs(offset)*120}px) rotateY(${rotateY}deg)`;
                 card.style.zIndex = zIndex;
-                card.style.opacity = Math.max(0.2, opacity);
+                card.style.opacity = Math.max(0.2, 1);
             });
         }
         updateCoverflow();
 
+        // 滚轮切换
         cfContainer.addEventListener('wheel', (e) => {
-            const activeCard = document.querySelector('.cf-card.active');
-            if(activeCard && activeCard.contains(e.target)) {
-                e.preventDefault(); 
-                if (e.deltaY > 0 && activeIndex < cards.length-1) activeIndex++;
-                else if (e.deltaY < 0 && activeIndex > 0) activeIndex--;
-                updateCoverflow();
-            }
+            e.preventDefault(); 
+            if (e.deltaY > 0 && activeIndex < cards.length-1) activeIndex++;
+            else if (e.deltaY < 0 && activeIndex > 0) activeIndex--;
+            updateCoverflow();
         }, { passive: false });
 
+        // 点击切换/跳转
         cards.forEach(c => c.addEventListener('click', ()=>{
             const idx = parseInt(c.dataset.index);
-            if(idx===activeIndex) { if(c.dataset.link!=='#') window.open(c.dataset.link,'_blank'); }
-            else { activeIndex=idx; updateCoverflow(); }
+            if(idx === activeIndex) { 
+                if(c.dataset.link !== '#') window.open(c.dataset.link,'_blank'); 
+            } else { 
+                activeIndex = idx; 
+                updateCoverflow(); 
+            }
         }));
 
-        let tx = 0;
-        cfContainer.addEventListener('touchstart', e=>tx=e.touches[0].clientX);
+        // 触摸滑动
+        let touchStartX = 0;
+        cfContainer.addEventListener('touchstart', e=>touchStartX = e.touches[0].clientX);
         cfContainer.addEventListener('touchend', e=>{
-            if(Math.abs(e.changedTouches[0].clientX - tx) > 50) {
-                if(tx > e.changedTouches[0].clientX && activeIndex < cards.length-1) activeIndex++;
-                else if(tx < e.changedTouches[0].clientX && activeIndex > 0) activeIndex--;
+            const touchEndX = e.changedTouches[0].clientX;
+            if(Math.abs(touchEndX - touchStartX) > 50) {
+                if(touchStartX > touchEndX && activeIndex < cards.length-1) activeIndex++;
+                else if(touchStartX < touchEndX && activeIndex > 0) activeIndex--;
                 updateCoverflow();
             }
         });
+
         window.addEventListener('resize', updateCoverflow);
 
-        // ================= 4. 真·3D 立体银色金属字 (Multi-Layer) =================
+        // ================= 3D金属立体字 =================
         function initThreeJS() {
-            const sc=new THREE.Scene(); const cam=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,100); cam.position.z=5;
-            const ren=new THREE.WebGLRenderer({alpha:true,antialias:true}); ren.setSize(window.innerWidth,window.innerHeight);
-            document.getElementById('webgl-canvas').appendChild(ren.domElement);
+            const scene = new THREE.Scene(); 
+            const camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,100); 
+            camera.position.z = 5;
+            
+            const renderer = new THREE.WebGLRenderer({alpha:true,antialias:true}); 
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('webgl-canvas').appendChild(renderer.domElement);
             
             const group = new THREE.Group();
-            
-            // 1. 绘制纹理
-            const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 128;
+            const canvas = document.createElement('canvas'); 
+            canvas.width = 512; 
+            canvas.height = 128;
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = 'white'; 
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.textAlign = 'center'; 
+            ctx.textBaseline = 'middle';
             
             ctx.font = 'bold 80px "Microsoft YaHei", sans-serif';
             const text = "柳皓升";
             const textWidth = ctx.measureText(text).width;
             ctx.fillText(text, 256, 70); 
-
             ctx.font = 'bold 30px Arial, sans-serif'; 
             ctx.fillText("®", 256 + textWidth/2 + 15, 45); 
 
-            const tex = new THREE.CanvasTexture(canvas);
+            const texture = new THREE.CanvasTexture(canvas);
 
-            // 2. 堆叠15层
-            for(let i=0; i<15; i++) {
-                const mat = new THREE.MeshStandardMaterial({ 
-                    map: tex, transparent: true, 
-                    color: 0xffffff, // 银白
-                    metalness: 1.0, roughness: 0.4,
+            // 堆叠立体层
+            for(let i=0; i<18; i++) {
+                const material = new THREE.MeshStandardMaterial({ 
+                    map: texture, 
+                    transparent: true, 
+                    color: 0xffffff,
+                    metalness: 1.0, 
+                    roughness: 0.3,
                     opacity: 0.95
                 });
-                const geo = new THREE.PlaneGeometry(4, 1);
-                const mesh = new THREE.Mesh(geo, mat);
+                const geometry = new THREE.PlaneGeometry(4, 1);
+                const mesh = new THREE.Mesh(geometry, material);
                 mesh.position.z = -i * 0.01; 
                 group.add(mesh);
             }
             
-            window.group = group; sc.add(group);
+            window.group = group; 
+            scene.add(group);
 
             // 灯光
-            const l1 = new THREE.PointLight(0xffffff, 2); l1.position.set(5, 5, 5); sc.add(l1);
-            const l2 = new THREE.PointLight(0xccccff, 1); l2.position.set(-5, -5, 5); sc.add(l2);
+            const light1 = new THREE.PointLight(0xffffff, 2); 
+            light1.position.set(5, 5, 5); 
+            scene.add(light1);
+            const light2 = new THREE.PointLight(0xccccff, 1); 
+            light2.position.set(-5, -5, 5); 
+            scene.add(light2);
 
-            // 鼠标跟随 + 角度钳制
+            // 鼠标跟随
             document.addEventListener('mousemove', e=>{
-                const x=(e.clientX/window.innerWidth)*2-1, y=-(e.clientY/window.innerHeight)*2+1;
+                const x = (e.clientX/window.innerWidth)*2-1;
+                const y = -(e.clientY/window.innerHeight)*2+1;
                 gsap.to(group.position,{x:x*1.5,y:y*1.5,duration:0.8});
-                
-                // 限制在 ±0.5 弧度 (约30度)
                 gsap.to(group.rotation,{
                     x: Math.max(-0.5, Math.min(0.5, y*1.5)), 
                     y: Math.max(-0.5, Math.min(0.5, x*1.5)), 
@@ -475,10 +725,12 @@
                 });
             });
 
-            function animate(){ requestAnimationFrame(animate); ren.render(sc,cam); }
+            function animate(){ 
+                requestAnimationFrame(animate); 
+                renderer.render(scene,camera); 
+            }
             animate();
         }
-
     </script>
 </body>
 </html>
