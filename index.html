@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	 <link rel="shortcut icon" href="LHS网页图标.png">
+    <title>柳皓升® | 个人作品</title>
+    
+    <!-- 引入国内极速 CDN -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/three.js/0.146.0/three.min.js"></script>
+
+    <style>
+        /* ================= 1. 全局配置 ================= */
+        :root {
+            --bg-color: #ffffff;
+            --text-primary: #111111;
+            --text-secondary: #555555;
+            --accent-color: #b8860b; 
+            --border-color: rgba(0, 0, 0, 0.1);
+            --cursor-color: #ffffff; 
+            --box-thickness: 25px; 
+        }
+
+        body.dark-mode {
+            --bg-color: #050505;
+            --text-primary: #f0f0f0;
+            --text-secondary: #888888;
+            --accent-color: #D4AF37;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --cursor-color: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            overflow-x: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        ::-webkit-scrollbar { width: 0; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ================= 2. 纯白遮罩 (开场) ================= */
+        #white-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #ffffff;
+            z-index: 999999;
+            pointer-events: none; /* 防止遮挡交互 */
+            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ================= 3. 智能反色光圈 ================= */
+        #cursor-circle {
+            position: fixed; top: 0; left: 0;
+            width: 50px; height: 50px;
+            border: 3px solid #fff; 
+            border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.2s, opacity 0.2s;
+            mix-blend-mode: difference; 
+        }
+        #cursor-dot {
+            position: fixed; top: 0; left: 0;
+            width: 8px; height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+        }
+        .hover-active #cursor-circle { transform: translate(-50%, -50%) scale(1.5); background: rgba(255,255,255,0.2); }
+
+        /* ================= 4. 内容区域 ================= */
+        #webgl-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .content-layer { position: relative; z-index: 10; opacity: 0; transition: opacity 1s ease 0.5s; /* 延迟显示内容 */ }
+
+        nav { position: fixed; top: 0; width: 100%; padding: 30px 5%; display: flex; justify-content: space-between; align-items: flex-start; z-index: 100; }
+        .brand { font-size: 1.4rem; font-weight: 900; letter-spacing: -1px; line-height: 1; }
+        #poem-container { margin-top: 8px; font-size: 0.85rem; color: var(--text-secondary); font-family: "FangSong", "Songti SC", serif; letter-spacing: 1px; min-height: 1.2em; opacity: 0; transition: opacity 0.5s ease; }
+        .theme-toggle { width: 30px; height: 30px; border: 1px solid currentColor; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-top: -5px; }
+        .theme-toggle svg { width: 14px; height: 14px; fill: currentColor; }
+
+        #hero { height: 85vh; display: flex; align-items: center; justify-content: center; }
+        .hero-text { font-size: 9vw; font-weight: 900; mix-blend-mode: exclusion; white-space: nowrap; }
+
+        #bio { padding: 80px 10%; max-width: 1200px; margin: 0 auto; }
+        .bio-title { font-size: 3rem; margin-bottom: 40px; color: var(--accent-color); }
+        .bio-text { font-size: 1.1rem; line-height: 2; opacity: 0.8; text-align: justify; }
+        .bio-word { display: inline-block; transition: all 0.3s; }
+        .bio-word:hover { color: var(--accent-color); transform: translateY(-3px) scale(1.1); }
+
+        .bio-gallery { margin-top: 60px; width: 100%; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+        .gallery-track { display: flex; gap: 20px; width: max-content; animation: scroll 30s linear infinite; }
+        .gallery-item img { width: 200px; height: 120px; object-fit: cover; filter: grayscale(1); transition: 0.3s; }
+        .gallery-item:hover img { filter: grayscale(0); }
+        @keyframes scroll { to { transform: translateX(-50%); } }
+
+        /* ================= 5. 3D 专辑 ================= */
+        #albums { padding: 100px 0; background: rgba(0,0,0,0.02); border-top: 1px solid var(--border-color); position: relative; overflow: visible; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        
+        .coverflow-container {
+            position: relative; width: 100%; height: 500px; perspective: 1200px; 
+            display: flex; justify-content: center; align-items: center;
+            touch-action: pan-y; 
+        }
+
+        .cf-card {
+            position: absolute; width: 320px; aspect-ratio: 1/1;
+            transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            cursor: pointer;
+        }
+
+        .cf-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; }
+        
+        .cf-front { 
+            transform: translateZ(calc(var(--box-thickness) / 2)); 
+            background: #fff; border: 1px solid rgba(0,0,0,0.1); 
+        }
+        .cf-img { width: 100%; height: 100%; object-fit: cover; }
+
+        .cf-side { background: #e6e6e6; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; overflow: hidden; box-sizing: border-box; }
+        .spine-text { white-space: nowrap; font-size: 12px; letter-spacing: 2px; color: #000; font-weight: 900; opacity: 0.8; }
+
+        .cf-side-right { width: var(--box-thickness); height: 100%; top: 0; right: 0; transform: rotateY(90deg) translateZ(calc(var(--box-thickness)/2)); }
+        .cf-side-right .spine-text { transform: rotate(90deg); }
+
+        .cf-side-left { width: var(--box-thickness); height: 100%; top: 0; left: 0; transform: rotateY(-90deg) translateZ(calc(var(--box-thickness)/2)); }
+        .cf-side-left .spine-text { transform: rotate(-90deg); }
+
+        .cf-side-top { width: 100%; height: var(--box-thickness); top: 0; left: 0; transform: rotateX(90deg) translateZ(calc(var(--box-thickness)/2)); background: #fff; border: 1px solid #ccc; }
+
+        .cf-reflection { position: absolute; top: 100%; left: 0; width: 100%; height: 100%; transform: rotateX(180deg); opacity: 0.3; mask-image: linear-gradient(transparent 70%, #000); -webkit-mask-image: linear-gradient(transparent 70%, #000); pointer-events: none; }
+        .cf-reflection img { width: 100%; height: 100%; object-fit: cover; filter: blur(4px); }
+        .cf-name { position: absolute; bottom: -80px; width: 100%; text-align: center; font-size: 1rem; letter-spacing: 2px; opacity: 0; transition: 0.5s; transform: translateZ(50px); pointer-events: none; color: var(--text-primary); }
+        .cf-card.active .cf-name { opacity: 1; }
+
+        /* Footer */
+        footer { padding: 100px 5% 50px; border-top: 1px solid var(--border-color); background: var(--bg-color); }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr; gap: 50px; }
+        .footer-col h3 { font-size: 1.2rem; margin-bottom: 30px; color: var(--text-primary); text-transform: uppercase; letter-spacing: 1px; }
+        .contact-row { margin-bottom: 15px; color: var(--text-secondary); display: flex; align-items: baseline; }
+        .contact-label { color: var(--accent-color); width: 60px; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
+        .social-row { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
+        .social-icon { width: 40px; height: 40px; border: 1px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: var(--text-primary); }
+        .social-icon:hover { background: var(--accent-color); border-color: var(--accent-color); color: #fff; transform: translateY(-3px); }
+        .social-icon svg { width: 16px; height: 16px; fill: currentColor; }
+        .hours-box { padding: 20px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.02); color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8; }
+        .copyright { text-align: center; color: var(--text-secondary); font-size: 0.8rem; margin-top: 60px; }
+
+        #qr-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 20000; display: none; justify-content: center; align-items: center; opacity: 0; }
+        .qr-card { background: #fff; padding: 30px; border-radius: 4px; text-align: center; transform: scale(0.8); }
+        .qr-card img { width: 250px; height: 250px; display: block; margin-bottom: 15px; }
+
+        @media (max-width: 768px) {
+            .footer-container { grid-template-columns: 1fr; }
+            .coverflow-container { height: 400px; }
+            .cf-card { width: 240px; }
+            .hero-text { font-size: 15vw; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 开场白屏 -->
+    <div id="white-overlay"></div>
+
+    <div id="qr-modal" onclick="closeQR()">
+        <div class="qr-card" onclick="event.stopPropagation()">
+            <img id="qr-img-placeholder" src="" alt="QR Code">
+            <div style="font-weight:bold; letter-spacing:1px; margin-bottom:5px; color:#333;">扫描二维码</div>
+            <div style="font-size:0.7rem; color:#999;">点击背景关闭</div>
+        </div>
+    </div>
+
+    <!-- 智能反色光圈 -->
+    <div id="cursor-circle"></div><div id="cursor-dot"></div>
+    <div id="webgl-canvas"></div>
+
+    <div class="content-layer" id="content-layer">
+        <nav>
+            <div class="brand-container">
+                <div class="brand">柳 皓 升<sup>®</sup></div>
+                <div id="poem-container">正在获取诗词...</div>
+            </div>
+            <div class="theme-toggle" id="theme-btn" data-hover="true"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+        </nav>
+
+        <section id="hero"><div class="hero-text-container"><div class="hero-text" id="hero-rotator">个人作品</div></div></section>
+
+        <section id="bio">
+            <h2 class="bio-title">个人简介</h2>
+            <p class="bio-text" id="bio-content">
+                柳皓升，唱作人、音乐制作人，坚持独立创作，包揽作品的作词、作曲及编曲，以其全链路的创作模式深耕于音乐领域。柳皓升的音乐风格较为多元，自2025年底，已发行10余张独立专辑。目前，其音乐作品已全面上架国内外主流音乐平台，凭借独特的创作风格，收获了不同地域听众的关注与喜爱。
+            </p>
+            <div class="bio-gallery">
+                <div class="gallery-track">
+                    <div class="gallery-item"><img src="https://ts1.tc.mm.bing.net/th/id/OIP-C.8bI2spsOY9t4fHhREZvxpQHaHa?w=310&h=198&c=7&rs=1&bgcl=fffffe&r=0&o=6&dpr=1.3&pid=23.1"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.h9gwD5RqJGN3SS0znQzjUQHaHa?w=167&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.a7pnld6zwtI-TpruVGb-zwHaEK?w=315&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.xblH8WF9I88OWyIuM-dGqwHaEK?w=308&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://tse2-mm.cn.bing.net/th/id/OIP-C.yomOigUkGX8AnkDWIFLGUgHaEg?w=285&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://www.66office.com/storage/images/202012/goods_img/0_P_1607884860173.png"></div><div class="gallery-item"><img src="https://p3-sdbk2-media.byteimg.com/tos-cn-i-xv4ileqgde/fa687855dc4340a984402dff9d744ed2~tplv-xv4ileqgde-resize-w:360.image"></div>
+                    <div class="gallery-item"><img src="https://ts1.tc.mm.bing.net/th/id/OIP-C.8bI2spsOY9t4fHhREZvxpQHaHa?w=310&h=198&c=7&rs=1&bgcl=fffffe&r=0&o=6&dpr=1.3&pid=23.1"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.h9gwD5RqJGN3SS0znQzjUQHaHa?w=167&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.a7pnld6zwtI-TpruVGb-zwHaEK?w=315&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.xblH8WF9I88OWyIuM-dGqwHaEK?w=308&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://www.66office.com/storage/images/202012/goods_img/0_P_1607884860173.png"></div><div class="gallery-item"><img src="https://tse2-mm.cn.bing.net/th/id/OIP-C.yomOigUkGX8AnkDWIFLGUgHaEg?w=285&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"></div><div class="gallery-item"><img src="https://p3-sdbk2-media.byteimg.com/tos-cn-i-xv4ileqgde/fa687855dc4340a984402dff9d744ed2~tplv-xv4ileqgde-resize-w:360.image"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="albums">
+            <div class="section-header"><h2>音乐作品</h2><p style="color:var(--text-secondary); margin-top:10px; font-size:0.8rem; letter-spacing:2px;">在当前专辑上滑动切换</p></div>
+            <div class="coverflow-container" id="coverflow">
+                <!-- JS生成 -->
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-container">
+                <div class="footer-col">
+                    <h3>联系方式</h3>
+                    <div class="contact-row"><span class="contact-label">电话</span>135 0799 0821</div>
+                    <div class="contact-row"><span class="contact-label">邮箱</span>1278485618@qq.com</div>
+                    <div class="contact-row"><span class="contact-label">地址</span>中国 江西</div>
+                    <div class="social-row">
+                        <div class="social-icon" data-hover="true" onclick="showQR('微信.png','微信')"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm5 5v8h8V8H8z"/></svg></div>
+                        <div class="social-icon" data-hover="true" onclick="showQR('QQ1278485618.jpg','QQ')"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm5 5v8h8V8H8z"/></svg></div>
+                        <a href="https://m.douyin.com/share/user/MS4wLjABAAAAjAcT63-X7V1YEyG8Sx5pKjYYCfcW9ZAx_JNrZWPVir8" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M16.5 2h-3v10.5c0 1.9-1.6 3.5-3.5 3.5-1.9 0-3.5-1.6-3.5-3.5 0-1.9 1.6-3.5 3.5-3.5.5 0 1 .1 1.5.2V5.5c-.5-.1-1-.2-1.5-.2-4.1 0-7.5 3.4-7.5 7.5S5.9 20.3 10 20.3c4.1 0 7.5-3.4 7.5-7.5V6c1.4.9 3 1.5 4.8 1.6V4c-2 0-3.8-.8-5-2z"/></svg></a>
+                        <a href="https://www.youtube.com/@liuhaosheng-music" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M21.6 7.2c-.3-1.1-1.1-1.9-2.2-2.2C17.5 4.5 12 4.5 12 4.5s-5.5 0-7.4.5c-1.1.3-1.9 1.1-2.2 2.2C2 9.1 2 12 2 12s0 2.9.5 4.8c.3 1.1 1.1 1.9 2.2 2.2 1.9.5 7.4.5 7.4.5s5.5 0 7.4-.5c1.1-.3 1.9-1.1 2.2-2.2.5-1.9.5-4.8.5-4.8s0-2.9-.5-4.8zM9.5 15v-6l5.5 3-5.5 3z"/></svg></a>
+                        <a href="https://instagram.com" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.4 5.6 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.6 18.4 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></a>
+                        <a href="https://x.com/lhaoshengmusic" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+                        <a href="http://music.163.com/artist?id=53393523&userid=3929332230" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/></svg></a>
+                        <a href="https://c6.y.qq.com/base/fcgi-bin/u?__=tE6iYs7AxZBt" target="_blank" class="social-icon" data-hover="true"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>工作时间</h3>
+                    <div class="hours-box">
+                        <strong style="color:var(--accent-color)">周一至周五</strong> 09:00 - 20:00<br>
+                        <strong style="color:var(--accent-color)">周末/节假日</strong> 仅处理紧急事务
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">&copy; 2025 柳皓升® LIUHAOSHENG. 版权所有.</div>
+        </footer>
+    </div>
+
+    <script>
+        // ================= 1. 开场逻辑 (Pure White Fade) =================
+        const overlay = document.getElementById('white-overlay');
+        const contentLayer = document.getElementById('content-layer');
+
+        window.onload = function() {
+            // 0.5秒后开始淡出白屏
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                contentLayer.style.opacity = '1';
+                
+                // 启动 JS 动画
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    initAnimations();
+                }, 1500); // 等待1.5秒淡出动画完成
+            }, 500);
+        };
+
+        // ================= 2. 核心动画 =================
+        function initAnimations() {
+            fetchPoem();
+            setInterval(fetchPoem, 3000); 
+            initThreeJS();
+        }
+
+        // 诗词
+        const poemEl = document.getElementById('poem-container');
+        function fetchPoem() {
+            poemEl.style.opacity = 0;
+            setTimeout(() => {
+                fetch('https://v1.jinrishici.com/all.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        poemEl.innerText = data.content;
+                        poemEl.style.opacity = 1;
+                    })
+                    .catch(err => {
+                        const fallbacks = ["海内存知己，天涯若比邻", "会当凌绝顶，一览众山小", "大鹏一日同风起，扶摇直上九万里"];
+                        poemEl.innerText = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+                        poemEl.style.opacity = 1;
+                    });
+            }, 300);
+        }
+
+        // Hero Text
+        const words=["LIUHAOSHEG", "柳 皓 升", "独立音乐人"], heroTxt=document.getElementById('hero-rotator');
+        let wIdx=0;
+        setInterval(()=>{
+            wIdx=(wIdx+1)%words.length;
+            gsap.to(heroTxt,{opacity:0,filter:"blur(10px)",y:-20,duration:0.8,onComplete:()=>{
+                heroTxt.innerText=words[wIdx]; gsap.set(heroTxt,{y:20});
+                gsap.to(heroTxt,{opacity:1,filter:"blur(0px)",y:0,duration:0.8});
+            }});
+        }, 3000);
+
+        // QR
+        const qrModal=document.getElementById('qr-modal'), qrImg=document.getElementById('qr-img-placeholder');
+        window.showQR = (url, txt)=>{ qrImg.src=url; qrModal.style.display='flex'; gsap.to(qrModal,{opacity:1,duration:0.3}); };
+        window.closeQR = ()=>{ gsap.to(qrModal,{opacity:0,duration:0.3,onComplete:()=>{qrModal.style.display='none'}}); };
+
+        // 主题
+        document.getElementById('theme-btn').addEventListener('click', ()=>{ 
+            document.body.classList.toggle('dark-mode'); 
+            const isDark = document.body.classList.contains('dark-mode');
+            if(window.group) {
+                window.group.children.forEach(mesh => {
+                    mesh.material.color.setHex(isDark ? 0xffffff : 0x111111);
+                    mesh.material.emissive.setHex(isDark ? 0x222222 : 0x000000);
+                });
+            }
+        });
+
+        // 光标跟随
+        const cc=document.getElementById('cursor-circle'), cd=document.getElementById('cursor-dot');
+        const hoverElements = document.querySelectorAll('[data-hover="true"]');
+        document.addEventListener('mousemove', e=>{ 
+            gsap.to(cd,{x:e.clientX,y:e.clientY,duration:0.2}); 
+            gsap.to(cc,{x:e.clientX,y:e.clientY,duration:0.2}); 
+        });
+        document.addEventListener('mousedown', ()=>gsap.to(cc,{scale:0.8,duration:0.1}));
+        document.addEventListener('mouseup', ()=>gsap.to(cc,{scale:1,duration:0.1}));
+        
+        document.querySelectorAll('a, .social-icon, .cf-card').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hover-active'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hover-active'));
+        });
+
+        // ================= 3D 专辑 (C位独立 + 间距优化) =================
+        const albumsData = [
+            {name:"黑 (BLACK)",img:"https://p2.music.126.net/cG1TAyl1AKia40Mhhwz06w==/109951172162092710.jpg?param=177y177",link:"https://music.163.com/#/album?id=288753466"},
+            {name:"潮汐未过岸",img:"https://p1.music.126.net/UF_ddUYU-TBaeNTf6dFPfw==/109951171915019526.jpg?param=130y130",link:"https://music.163.com/#/album?id=282543417"},
+            {name:"醒途六记",img:"https://p1.music.126.net/UszM_VkzRSPjF201EDicWA==/109951172247853272.jpg?param=177y177",link:"https://music.163.com/#/album?id=289395546"},
+            {name:"烏檀踏沙EBONY SANDS TREAD",img:"https://p2.music.126.net/MJh5y-TBcZHRj9lSyP0AUw==/109951172472875663.jpg?param=177y177",link:"https://music.163.com/#/album?id=151439974"},
+            {name:"就这么随便",img:"https://p1.music.126.net/U92MJf-f8Ql28IFBrMl0dQ==/109951172417413499.jpg?param=177y177",link:"https://music.163.com/#/album?id=354284452"},
+            {name:"Lost in fantasy",img:"https://p1.music.126.net/o0tS8mMhPKrGZ-bS2VMGBw==/109951169618739136.jpg?param=177y177",link:"https://music.163.com/#/album?id=157451544"},
+            {name:"Leisure (闲暇)",img:"https://p1.music.126.net/bXmEJQnx9ZZr2zJ6HzDbGg==/109951169604413603.jpg?param=177y177",link:"https://music.163.com/#/album?id=157347839"},
+            {name:"终归要清醒",img:"https://p1.music.126.net/5Fqvpulqgk_YPWFvBSX45w==/109951172329934670.jpg?param=177y177",link:"https://music.163.com/#/album?id=351526443"},
+            {name:"执念",img:"https://p1.music.126.net/QMS4rwbu1whwa_djLlSNSg==/109951172204580313.jpg?param=177y177",link:"https://music.163.com/#/album?id=289867654"},
+            {name:"半杯茶",img:"https://p2.music.126.net/mW2U_mwygCJm6X-A-1OIDA==/109951172147152163.jpg?param=177y177",link:"https://music.163.com/#/album?id=288281494"}
+        ];
+        
+        const cfContainer = document.getElementById('coverflow');
+        cfContainer.innerHTML = albumsData.map((a,i)=>`
+            <div class="cf-card" data-index="${i}" data-link="${a.link}">
+                <div class="cf-front cf-face"><img src="${a.img}" class="cf-img"></div>
+                <div class="cf-side cf-side-right cf-face"><div class="spine-text">${a.name}</div></div>
+                <div class="cf-side cf-side-left cf-face"><div class="spine-text">${a.name}</div></div>
+                <div class="cf-side cf-side-top cf-face"></div>
+                <div class="cf-reflection"><img src="${a.img}"></div>
+                <div class="cf-name">${a.name}</div>
+            </div>
+        `).join('');
+
+        const cards = document.querySelectorAll('.cf-card');
+        let activeIndex = 4;
+
+        function updateCoverflow() {
+            cards.forEach((card, i) => {
+                const offset = i - activeIndex;
+                const spacing = window.innerWidth < 768 ? 60 : 110;
+                let x = offset * spacing;
+                let rotateY = 0;
+                let zIndex = 100 - Math.abs(offset);
+                let opacity = 1;
+
+                const centerGap = 260; 
+
+                if (offset === 0) {
+                    x = 0; rotateY = 0;
+                    card.classList.add('active');
+                } else if (offset < 0) {
+                    x = (offset * spacing) - centerGap + spacing;
+                    rotateY = 50; 
+                    card.classList.remove('active');
+                } else {
+                    x = (offset * spacing) + centerGap - spacing;
+                    rotateY = -50;
+                    card.classList.remove('active');
+                }
+
+                card.style.transform = `translateX(${x}px) translateZ(${-Math.abs(offset)*120}px) rotateY(${rotateY}deg)`;
+                card.style.zIndex = zIndex;
+                card.style.opacity = Math.max(0.2, opacity);
+            });
+        }
+        updateCoverflow();
+
+        cfContainer.addEventListener('wheel', (e) => {
+            const activeCard = document.querySelector('.cf-card.active');
+            if(activeCard && activeCard.contains(e.target)) {
+                e.preventDefault(); 
+                if (e.deltaY > 0 && activeIndex < cards.length-1) activeIndex++;
+                else if (e.deltaY < 0 && activeIndex > 0) activeIndex--;
+                updateCoverflow();
+            }
+        }, { passive: false });
+
+        cards.forEach(c => c.addEventListener('click', ()=>{
+            const idx = parseInt(c.dataset.index);
+            if(idx===activeIndex) { if(c.dataset.link!=='#') window.open(c.dataset.link,'_blank'); }
+            else { activeIndex=idx; updateCoverflow(); }
+        }));
+
+        let tx = 0;
+        cfContainer.addEventListener('touchstart', e=>tx=e.touches[0].clientX);
+        cfContainer.addEventListener('touchend', e=>{
+            if(Math.abs(e.changedTouches[0].clientX - tx) > 50) {
+                if(tx > e.changedTouches[0].clientX && activeIndex < cards.length-1) activeIndex++;
+                else if(tx < e.changedTouches[0].clientX && activeIndex > 0) activeIndex--;
+                updateCoverflow();
+            }
+        });
+        window.addEventListener('resize', updateCoverflow);
+
+        // ================= 4. 真·3D 立体银色金属字 (Multi-Layer) =================
+        function initThreeJS() {
+            const sc=new THREE.Scene(); const cam=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,100); cam.position.z=5;
+            const ren=new THREE.WebGLRenderer({alpha:true,antialias:true}); ren.setSize(window.innerWidth,window.innerHeight);
+            document.getElementById('webgl-canvas').appendChild(ren.domElement);
+            
+            const group = new THREE.Group();
+            
+            // 1. 绘制纹理
+            const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white'; 
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            
+            ctx.font = 'bold 80px "Microsoft YaHei", sans-serif';
+            const text = "柳皓升";
+            const textWidth = ctx.measureText(text).width;
+            ctx.fillText(text, 256, 70); 
+
+            ctx.font = 'bold 30px Arial, sans-serif'; 
+            ctx.fillText("®", 256 + textWidth/2 + 15, 45); 
+
+            const tex = new THREE.CanvasTexture(canvas);
+
+            // 2. 堆叠15层
+            for(let i=0; i<15; i++) {
+                const mat = new THREE.MeshStandardMaterial({ 
+                    map: tex, transparent: true, 
+                    color: 0xffffff, // 银白
+                    metalness: 1.0, roughness: 0.4,
+                    opacity: 0.95
+                });
+                const geo = new THREE.PlaneGeometry(4, 1);
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.z = -i * 0.01; 
+                group.add(mesh);
+            }
+            
+            window.group = group; sc.add(group);
+
+            // 灯光
+            const l1 = new THREE.PointLight(0xffffff, 2); l1.position.set(5, 5, 5); sc.add(l1);
+            const l2 = new THREE.PointLight(0xccccff, 1); l2.position.set(-5, -5, 5); sc.add(l2);
+
+            // 鼠标跟随 + 角度钳制
+            document.addEventListener('mousemove', e=>{
+                const x=(e.clientX/window.innerWidth)*2-1, y=-(e.clientY/window.innerHeight)*2+1;
+                gsap.to(group.position,{x:x*1.5,y:y*1.5,duration:0.8});
+                
+                // 限制在 ±0.5 弧度 (约30度)
+                gsap.to(group.rotation,{
+                    x: Math.max(-0.5, Math.min(0.5, y*1.5)), 
+                    y: Math.max(-0.5, Math.min(0.5, x*1.5)), 
+                    duration:0.8
+                });
+            });
+
+            function animate(){ requestAnimationFrame(animate); ren.render(sc,cam); }
+            animate();
+        }
+
+    </script>
+</body>
+</html>
